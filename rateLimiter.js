@@ -1,6 +1,6 @@
 const redis = require('redis')
 const m = require('moment')
-const client = redis.createClient(6379, 'redis')
+const client = redis.createClient(21479, 'redis')
 
 client.on("connect", () => console.log("redis up"))
 
