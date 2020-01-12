@@ -1,6 +1,6 @@
 const redis = require('redis')
 const m = require('moment')
-const client = redis.createClient()
+const client = redis.createClient(process.env.REDIS_URL)
 
 client.on("connect", () => console.log("redis up"))
 
