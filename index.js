@@ -10,9 +10,14 @@ const pool = new pg.Pool()
 console.log(pool)
 
 const queryHandler = (req, res, next) => {
-  pool.query(req.sqlQuery).then((r) => {
-    return res.json(r.rows || [])
-  }).catch(next)
+  pool.connect((err, client, release) => {
+    if (err) {
+      return console.error('Error acquiring client', err.stack)
+    }
+    client.query(req.sqlQuery).then((r) => {
+      return res.json(r.rows || [])
+    }).catch(next)
+  })
 }
 
 app.use(rateLimiter)
