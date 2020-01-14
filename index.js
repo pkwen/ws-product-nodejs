@@ -5,19 +5,12 @@ const rateLimiter = require('./rateLimiter')
 const app = express()
 // configs come from standard PostgreSQL env vars
 // https://www.postgresql.org/docs/9.6/static/libpq-envars.html
-const pool = new pg.Pool()
-
-console.log(pool)
+const pool = new pg.Pool({ connectionString: "postgresql://readonly:w2UIO@#bg532!@work-samples-db.cx4wctygygyq.us-east-1.rds.amazonaws.com:5432/work_samples"})
 
 const queryHandler = (req, res, next) => {
-  pool.connect((err, client, release) => {
-    if (err) {
-      return console.error('Error acquiring client', err.stack)
-    }
-    client.query(req.sqlQuery).then((r) => {
-      return res.json(r.rows || [])
-    }).catch(next)
-  })
+  pool.query(req.sqlQuery).then((r) => {
+    return res.json(r.rows || [])
+  }).catch(next)
 }
 
 app.use(rateLimiter)
