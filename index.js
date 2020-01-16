@@ -46,19 +46,24 @@ app.get('/data/hourly', (req, res, next) => {
     FROM public.hourly_events a
     LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
     ORDER BY a.date
-    LIMIT 100;
+    LIMIT 168;
   `
   return next()
 }, queryHandler)
 
 app.get('/data/daily', (req, res, next) => {
   req.sqlQuery = `
-    SELECT *
+    SELECT 
+        a.date,
+        SUM(impressions) AS impressions,
+        SUM(clicks) AS clicks,
+        SUM(revenue) AS revenue,
+        SUM(events) AS events
     FROM public.hourly_events a
-    LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
+    LEFT JOIN public.hourly_stats b ON a.date = b.date
     GROUP BY a.date
     ORDER BY a.date
-    LIMIT 100;
+    LIMIT 30;
   `
   return next()
 }, queryHandler)
