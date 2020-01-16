@@ -40,6 +40,28 @@ app.get('/events/daily', (req, res, next) => {
   return next()
 }, queryHandler)
 
+app.get('/data/hourly', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT *
+    FROM public.hourly_events a
+    LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
+    ORDER BY a.date
+    LIMIT 100;
+  `
+  return next()
+}, queryHandler)
+
+app.get('/data/daily', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT *
+    FROM public.hourly_events a
+    LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
+    ORDER BY a.date
+    LIMIT 100;
+  `
+  return next()
+}, queryHandler)
+
 app.get('/stats/hourly', (req, res, next) => {
   req.sqlQuery = `
     SELECT date, hour, impressions, clicks, revenue
@@ -60,6 +82,16 @@ app.get('/stats/daily', (req, res, next) => {
     GROUP BY date
     ORDER BY date
     LIMIT 7;
+  `
+  return next()
+}, queryHandler)
+
+app.get('/stats', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT *
+    FROM public.hourly_stats
+    ORDER BY date
+    LIMIT 100;
   `
   return next()
 }, queryHandler)
