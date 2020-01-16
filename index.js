@@ -56,6 +56,7 @@ app.get('/data/daily', (req, res, next) => {
     SELECT *
     FROM public.hourly_events a
     LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
+    GROUP BY a.date
     ORDER BY a.date
     LIMIT 100;
   `
