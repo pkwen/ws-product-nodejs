@@ -116,6 +116,7 @@ app.get('/poi_data', (req, res, next) => {
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
     LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
+    ORDER BY public.hourly_stats.date
     LIMIT 100;
   `
   return next()
