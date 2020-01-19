@@ -112,12 +112,15 @@ app.get('/poi', (req, res, next) => {
 
 app.get('/poi_data', (req, res, next) => {
   req.sqlQuery = `
-    SELECT *
+    SELECT 
+      count(e.poi_id) AS event_count,
+      count(s.poi_id) AS stat_count,
+      public.poi.name AS name
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
     LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
-    ORDER BY public.hourly_stats.date
-    LIMIT 100;
+    GROUP BY public.poi.name
+    LIMIT 300;
   `
   return next()
 }, queryHandler)
