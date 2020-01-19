@@ -57,6 +57,7 @@ app.get('/stats/daily', (req, res, next) => {
         SUM(clicks) AS clicks,
         SUM(revenue) AS revenue
     FROM public.hourly_stats
+    WHERE poi_id = 3
     GROUP BY date
     ORDER BY date
     LIMIT 7;
@@ -85,6 +86,7 @@ app.get('/poi', (req, res, next) => {
 app.get('/poi_data', (req, res, next) => {
   req.sqlQuery = `
     SELECT 
+      public.poi.poi_id AS poi_id,
       SUM(DISTINCT e.events) AS events,
       SUM(DISTINCT s.impressions) AS impressions,
       SUM(DISTINCT s.clicks) AS clicks,
@@ -93,8 +95,8 @@ app.get('/poi_data', (req, res, next) => {
       e.date
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
-    LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
-    GROUP BY e.date, public.poi.name
+    LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id AND s.date = e.date
+    GROUP BY e.date, public.poi.name, public.poi.poi_id
     LIMIT 100;
   `
   return next()
