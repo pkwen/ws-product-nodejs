@@ -93,7 +93,7 @@ app.get('/poi_data', (req, res, next) => {
       e.date
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
-    LEFT JOIN public.hourly_stats s ON s.date = e.date
+    LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
     GROUP BY e.date, public.poi.name
     LIMIT 100;
   `
