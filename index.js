@@ -40,34 +40,6 @@ app.get('/events/daily', (req, res, next) => {
   return next()
 }, queryHandler)
 
-app.get('/data/hourly', (req, res, next) => {
-  req.sqlQuery = `
-    SELECT *
-    FROM public.hourly_events a
-    LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
-    ORDER BY a.date
-    LIMIT 168;
-  `
-  return next()
-}, queryHandler)
-
-app.get('/data/daily', (req, res, next) => {
-  req.sqlQuery = `
-    SELECT 
-        a.date,
-        SUM(impressions) AS impressions,
-        SUM(clicks) AS clicks,
-        SUM(revenue) AS revenue,
-        SUM(events) AS events
-    FROM public.hourly_events a
-    LEFT JOIN public.hourly_stats b ON a.date = b.date
-    GROUP BY a.date
-    ORDER BY a.date
-    LIMIT 7;
-  `
-  return next()
-}, queryHandler)
-
 app.get('/stats/hourly', (req, res, next) => {
   req.sqlQuery = `
     SELECT date, hour, impressions, clicks, revenue
@@ -119,8 +91,36 @@ app.get('/poi_data', (req, res, next) => {
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
     LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
-    GROUP BY public.poi.name
-    LIMIT 300;
+    GROUP BY e.date, public.poi.name
+    LIMIT 100;
+  `
+  return next()
+}, queryHandler)
+
+app.get('/data/hourly', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT *
+    FROM public.hourly_events a
+    LEFT JOIN public.hourly_stats b ON a.date = b.date AND a.hour = b.hour
+    ORDER BY a.date
+    LIMIT 168;
+  `
+  return next()
+}, queryHandler)
+
+app.get('/data/daily', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT 
+        a.date,
+        SUM(impressions) AS impressions,
+        SUM(clicks) AS clicks,
+        SUM(revenue) AS revenue,
+        SUM(events) AS events
+    FROM public.hourly_events a
+    LEFT JOIN public.hourly_stats b ON a.date = b.date
+    GROUP BY a.date
+    ORDER BY a.date
+    LIMIT 7;
   `
   return next()
 }, queryHandler)
