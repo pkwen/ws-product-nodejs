@@ -63,7 +63,7 @@ app.get('/data/daily', (req, res, next) => {
     LEFT JOIN public.hourly_stats b ON a.date = b.date
     GROUP BY a.date
     ORDER BY a.date
-    LIMIT 30;
+    LIMIT 7;
   `
   return next()
 }, queryHandler)
@@ -106,6 +106,17 @@ app.get('/poi', (req, res, next) => {
   req.sqlQuery = `
     SELECT *
     FROM public.poi;
+  `
+  return next()
+}, queryHandler)
+
+app.get('/poi_data', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT *
+    FROM public.poi
+    LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
+    LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id
+    LIMIT 100;
   `
   return next()
 }, queryHandler)
