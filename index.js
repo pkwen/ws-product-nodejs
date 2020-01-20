@@ -92,11 +92,13 @@ app.get('/poi_data', (req, res, next) => {
       SUM(DISTINCT s.clicks) AS clicks,
       SUM(DISTINCT s.revenue) AS revenue,
       public.poi.name AS name,
+      public.poi.lat AS lat,
+      public.poi.lon AS lon,
       e.date
     FROM public.poi
     LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
     LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id AND s.date = e.date
-    GROUP BY e.date, public.poi.name, public.poi.poi_id
+    GROUP BY e.date, public.poi.name, public.poi.poi_id, public.poi.lat, public.poi.lon
     LIMIT 100;
   `
   return next()
@@ -117,10 +119,10 @@ app.get('/data/daily', (req, res, next) => {
   req.sqlQuery = `
     SELECT 
         a.date,
-        SUM(impressions) AS impressions,
-        SUM(clicks) AS clicks,
-        SUM(revenue) AS revenue,
-        SUM(events) AS events
+        SUM(DISTINCT impressions) AS impressions,
+        SUM(DISTINCT clicks) AS clicks,
+        SUM(DISTINCT revenue) AS revenue,
+        SUM(DISTINCT events) AS events
     FROM public.hourly_events a
     LEFT JOIN public.hourly_stats b ON a.date = b.date
     GROUP BY a.date
