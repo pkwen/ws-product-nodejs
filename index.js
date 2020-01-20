@@ -104,6 +104,24 @@ app.get('/poi_data', (req, res, next) => {
   return next()
 }, queryHandler)
 
+app.get('/map_data', (req, res, next) => {
+  req.sqlQuery = `
+    SELECT 
+      SUM(DISTINCT e.events) AS events,
+      SUM(DISTINCT s.impressions) AS impressions,
+      SUM(DISTINCT s.clicks) AS clicks,
+      SUM(DISTINCT s.revenue) AS revenue,
+      public.poi.name AS name,
+      public.poi.lat AS lat,
+      public.poi.lon AS lon
+    FROM public.poi
+    LEFT JOIN public.hourly_events e ON e.poi_id = public.poi.poi_id
+    LEFT JOIN public.hourly_stats s ON s.poi_id = public.poi.poi_id AND s.date = e.date
+    GROUP BY public.poi.name, public.poi.lat, public.poi.lon;
+  `
+  return next()
+}, queryHandler)
+
 app.get('/data/hourly', (req, res, next) => {
   req.sqlQuery = `
     SELECT *
